@@ -1,4 +1,4 @@
-enum Estimate {
+export enum Estimate {
   CLOSE,
   MEDIUM,
   FAR,
@@ -28,4 +28,37 @@ export const compare = (a: Island, b: Island): number => {
   const bValue = getValue(b)
   const similarity = 1 - (Math.abs(aValue - bValue))
   return similarity
+}
+
+export const quantifyMeasurement = (m: Measurement): number => {
+  return 0
+}
+
+const quantifyDistance = (a: Estimate): number => {
+  switch (a) {
+    case Estimate.CLOSE:
+      return 0
+    case Estimate.MEDIUM:
+      return 1
+    case Estimate.FAR:
+      return 2
+    default:
+      throw new Error(`unhandled case "${a}"`)
+  }
+}
+
+export const compareDistance = (a: Estimate, b: Estimate): number => {
+  const aValue = quantifyDistance(a)
+  const bValue = quantifyDistance(b)
+  const diff = Math.abs(aValue - bValue)
+  switch(diff) {
+    case 0:
+      return 1
+    case 1:
+      return 0.5
+    case 2:
+      return 0
+    default:
+      throw new Error(`unhandled case "${diff}"`)
+  }
 }

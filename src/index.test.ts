@@ -55,3 +55,42 @@ describe('islands', () => {
     })
   })
 })
+
+describe('measurements', () => {
+  describe('quantify', () => {
+    xit('should return sum of degrees and estimate', () => {
+      const m: mod.Measurement = {
+        degrees: 0,
+        distanceEstimate: mod.Estimate.CLOSE,
+      }
+      expect(mod.quantifyMeasurement(m)).toBe(0)
+    })
+  })
+})
+
+describe('distanceEstimate comparing', () => {
+  it.each([
+    [
+      1,
+      mod.Estimate.CLOSE,
+      mod.Estimate.CLOSE,
+    ],
+    [
+      0.5,
+      mod.Estimate.CLOSE,
+      mod.Estimate.MEDIUM,
+    ],
+    [
+      0.5,
+      mod.Estimate.FAR,
+      mod.Estimate.MEDIUM,
+    ],
+    [
+      0,
+      mod.Estimate.FAR,
+      mod.Estimate.CLOSE,
+    ],
+  ])('should return %d for %d, %d', (expected, a, b) => {
+    expect(mod.compareDistance(a, b)).toBe(expected)
+  })
+})
