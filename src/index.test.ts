@@ -56,18 +56,6 @@ describe('islands', () => {
   })
 })
 
-describe('measurements', () => {
-  describe('quantify', () => {
-    xit('should return sum of degrees and estimate', () => {
-      const m: mod.Measurement = {
-        degrees: 0,
-        distanceEstimate: mod.Estimate.CLOSE,
-      }
-      expect(mod.quantifyMeasurement(m)).toBe(0)
-    })
-  })
-})
-
 describe('distanceEstimate comparing', () => {
   it.each([
     [
@@ -92,5 +80,74 @@ describe('distanceEstimate comparing', () => {
     ],
   ])('should return %d for %d, %d', (expected, a, b) => {
     expect(mod.compareDistance(a, b)).toBe(expected)
+  })
+})
+
+describe('getDegreeDiff', () => {
+  it.each([
+    [
+      0,
+      90,
+      90,
+    ],
+    [
+      180,
+      90,
+      270,
+    ],
+    [
+      5,
+      90,
+      95,
+    ],
+    [
+      175,
+      275,
+      90,
+    ],
+    [
+      5,
+      0,
+      355,
+    ],
+  ])('should return %d for %d, %d', (expected, a, b) => {
+    expect(mod.getDegreeDiff(a, b)).toBe(expected)
+  })
+})
+
+describe('degrees comparing', () => {
+  it.each([
+    [
+      1,
+      90,
+      90,
+    ],
+    [
+      0,
+      90,
+      270,
+    ],
+    [
+      0.98,
+      90,
+      95,
+    ],
+    [
+      0.98,
+      0,
+      355,
+    ],
+    [
+      0.5,
+      90,
+      180,
+    ],
+    [
+      0.5,
+      90,
+      0,
+    ],
+  ])('should return %d for %d, %d', (expected, a, b) => {
+    expect(mod.compareDegrees(a, b)).toBeCloseTo(expected, 1)
   })
 })

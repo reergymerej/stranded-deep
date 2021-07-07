@@ -30,10 +30,6 @@ export const compare = (a: Island, b: Island): number => {
   return similarity
 }
 
-export const quantifyMeasurement = (m: Measurement): number => {
-  return 0
-}
-
 const quantifyDistance = (a: Estimate): number => {
   switch (a) {
     case Estimate.CLOSE:
@@ -61,4 +57,18 @@ export const compareDistance = (a: Estimate, b: Estimate): number => {
     default:
       throw new Error(`unhandled case "${diff}"`)
   }
+}
+
+export const getDegreeDiff = (a: number, b: number): number => {
+  const diff = Math.abs(a - b)
+  if (diff > 180) {
+    return 360 - diff
+  }
+  return diff
+}
+
+export const compareDegrees = (a: number, b: number): number => {
+  const diff = getDegreeDiff(a, b)
+  const similarity = 1 - (diff / 180)
+  return similarity
 }
