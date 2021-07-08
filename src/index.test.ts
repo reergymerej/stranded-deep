@@ -3,57 +3,8 @@ import * as mod from '.'
 const getMeasurement = (data: Partial<mod.Measurement> = {
 }): mod.Measurement => ({
   degrees: 0,
-  distanceEstimate: 0,
+  distanceEstimate: mod.Estimate.MEDIUM,
   ...data,
-})
-
-xdescribe('islands', () => {
-  describe('comparing', () => {
-    describe('when they are quite different', () => {
-      it('should give a low match likelihood', () => {
-        const islandA: mod.Island = [
-          getMeasurement({
-            degrees: 0,
-          }),
-        ]
-        const islandB: mod.Island = [
-          getMeasurement({
-            degrees: 1,
-          }),
-        ]
-        expect(mod.compare(islandA, islandB)).toBeLessThan(0.5)
-      })
-    })
-
-    describe('when they are quite similar', () => {
-      it('should give a high match likelihood', () => {
-        const islandA: mod.Island = [
-          getMeasurement({
-            degrees: 1,
-          }),
-        ]
-        const islandB: mod.Island = [
-          getMeasurement({
-            degrees: 0.8,
-          }),
-        ]
-        expect(mod.compare(islandA, islandB)).toBeGreaterThan(0.5)
-      })
-    })
-  })
-
-  describe('getValue', () => {
-    it('should quantify an island', () => {
-      const islandA: mod.Island = [
-        getMeasurement({
-          degrees: 1,
-        }),
-      ]
-      const actual = mod.getValue(islandA)
-      const expected = 1
-      expect(actual).toBe(expected)
-    })
-  })
 })
 
 describe('distanceEstimate comparing', () => {
@@ -153,51 +104,82 @@ describe('degrees comparing', () => {
 })
 
 describe('comparing measurements', () => {
-  it.each<[number, mod.Measurement, mod.Measurement]>([
-    [
-      1,
-      getMeasurement({ degrees: 0 }),
-      getMeasurement({ degrees: 0 }),
-    ],
-    [
-      0.5,
-      getMeasurement({ degrees: 0 }),
-      getMeasurement({ degrees: 180 }),
-    ],
-    [
-      0.75,
-      getMeasurement({
+  describe('degrees should carry more weight than distance', () => {
+    it('should not match when degrees are so far away', () => {
+      const a = getMeasurement({
         degrees: 0,
         distanceEstimate: mod.Estimate.CLOSE,
-      }),
-      getMeasurement({
-        degrees: 0,
-        distanceEstimate: mod.Estimate.MEDIUM,
-      }),
-    ],
-    [
-      0.25,
-      getMeasurement({
-        degrees: 0,
-        distanceEstimate: mod.Estimate.CLOSE,
-      }),
-      getMeasurement({
+      })
+      const b = getMeasurement({
         degrees: 180,
-        distanceEstimate: mod.Estimate.MEDIUM,
-      }),
+        distanceEstimate: mod.Estimate.CLOSE,
+      })
+      const actual = mod.compareMeasurements(a, b)
+      expect(actual).toBeLessThanOrEqual(0.1)
+    })
+  })
+})
+
+describe('comparing islands', () => {
+  it.each<[number, mod.Island, mod.Island]>([
+    [
+      // total match
+      1,
+      [
+        getMeasurement({ degrees: 0 }),
+      ],
+      [
+        getMeasurement({ degrees: 0 }),
+      ],
     ],
     [
+      // total opposite
       0,
-      getMeasurement({
-        degrees: 270,
-        distanceEstimate: mod.Estimate.CLOSE,
-      }),
-      getMeasurement({
-        degrees: 90,
-        distanceEstimate: mod.Estimate.FAR,
-      }),
+      [
+        getMeasurement({
+          degrees: 0,
+          distanceEstimate: mod.Estimate.CLOSE,
+        }),
+      ],
+      [
+        getMeasurement({
+          degrees: 180,
+          distanceEstimate: mod.Estimate.FAR,
+        }),
+      ],
     ],
-  ])('should return an average of the different component comparisons', (expected, a, b) => {
-    expect(mod.compareMeasurements(a, b)).toBeCloseTo(expected, 1)
+    [
+      // total match, unordered
+      1,
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({ degrees: 90 }),
+      ],
+      [
+        getMeasurement({ degrees: 90 }),
+        getMeasurement({ degrees: 0 }),
+      ],
+    ],
+    [
+      // pretty close
+      0.95,
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({
+          degrees: 90,
+          distanceEstimate: mod.Estimate.MEDIUM,
+        }),
+      ],
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({
+          degrees: 80,
+          distanceEstimate: mod.Estimate.FAR,
+        }),
+      ],
+    ],
+  ])('should return a composite number of the relationship', (expected, a, b) => {
+    const actual = mod.compareIslands(a, b)
+    expect(actual).toBeCloseTo(expected, 2)
   })
 })

@@ -83,12 +83,49 @@ const average = (numbers: number[]): number => {
   return sum(numbers) / numbers.length
 }
 
+const DEGREE_WEIGHT = 9
+const DISTANCE_WEIGHT = 1
+const weights = DEGREE_WEIGHT + DISTANCE_WEIGHT
+const degreeRatio = DEGREE_WEIGHT / weights
+const distanceRatio = DISTANCE_WEIGHT / weights
+
 export const compareMeasurements = (a: Measurement, b: Measurement): number => {
   const degrees = compareDegrees(a.degrees, b.degrees)
   const distanceEstimate = compareDistance(a.distanceEstimate, b.distanceEstimate)
+  const weighted = {
+    degrees: degreeRatio * degrees,
+    distanceEstimate: distanceRatio * distanceEstimate,
+  }
   const dimensions = [
-    degrees,
-    distanceEstimate,
+    weighted.degrees,
+    weighted.distanceEstimate,
   ]
-  return average(dimensions)
+  return sum(dimensions)
+}
+
+const sortBy = <T, K extends keyof T>(field: K) => (a: T, b: T): number => {
+  const aValue = a[field]
+  const bValue = b[field]
+  if (aValue < bValue) {
+    return -1
+  } if (aValue < bValue) {
+    return 1
+  }
+  return 0
+}
+
+const byDegrees = sortBy<Measurement, 'degrees'>('degrees')
+
+export const compareIslands = (a: Island, b: Island): number => {
+  const aSorted = a.sort(byDegrees)
+  const bSorted = b.sort(byDegrees)
+  if (aSorted.length === bSorted.length) {
+    const result: number[] = aSorted.map((aMeasurement, i) => {
+      const bMeasurement = bSorted[i]
+      return compareMeasurements(aMeasurement, bMeasurement)
+    })
+    return average(result)
+  } else {
+    throw new Error('I do not know how to handle missing measurements.')
+  }
 }
