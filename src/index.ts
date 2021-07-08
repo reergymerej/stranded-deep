@@ -24,6 +24,8 @@ export const getValue = (island: Island): number => {
 }
 
 export const compare = (a: Island, b: Island): number => {
+  // If two islands have the same measurements, they are the same.
+  // For each measurement, return the similarity.
   const aValue = getValue(a)
   const bValue = getValue(b)
   const similarity = 1 - (Math.abs(aValue - bValue))
@@ -71,4 +73,22 @@ export const compareDegrees = (a: number, b: number): number => {
   const diff = getDegreeDiff(a, b)
   const similarity = 1 - (diff / 180)
   return similarity
+}
+
+const sum = (numbers: number[]): number => {
+  return numbers.reduce((acc, value) => acc + value, 0)
+}
+
+const average = (numbers: number[]): number => {
+  return sum(numbers) / numbers.length
+}
+
+export const compareMeasurements = (a: Measurement, b: Measurement): number => {
+  const degrees = compareDegrees(a.degrees, b.degrees)
+  const distanceEstimate = compareDistance(a.distanceEstimate, b.distanceEstimate)
+  const dimensions = [
+    degrees,
+    distanceEstimate,
+  ]
+  return average(dimensions)
 }
