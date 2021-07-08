@@ -1,6 +1,6 @@
 # stranded-deep
 
-[![Build Status](https://app.travis-ci.com/reergymerej/stranded-deep.svg?branch=main)](https://app.travis-ci.com/reergymerej/stranded-deep)
+[![Build Status](https://app.travis-ci.com/reergymerej/stranded-deep.svg?branch=master)](https://app.travis-ci.com/reergymerej/stranded-deep)
 
 You have a compass and the will to survive.  For each island, record references
 to other islands you see.  This will help map the world.
