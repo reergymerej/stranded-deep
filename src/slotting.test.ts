@@ -136,3 +136,33 @@ describe('getSlotSection', () => {
     expect(actual).toEqual(expected)
   })
 })
+
+describe('getSlots', () => {
+  it('should return super sexy slotting sections for sorting fun', () => {
+    const list = [0, 90, 180, 270]
+    const actual = mod.getSlots(list)
+    const expected: mod.Slots = [
+      {
+        min: 315,
+        center: 0,
+        max: 45,
+      },
+      {
+        min: 45,
+        center: 90,
+        max: 135,
+      },
+      {
+        min: 135,
+        center: 180,
+        max: 225,
+      },
+      {
+        min: 225,
+        center: 270,
+        max: 315,
+      },
+    ]
+    expect(actual).toEqual(expected)
+  })
+})

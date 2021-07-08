@@ -32,6 +32,9 @@ export type SlotSection = {
   center: number,
   max: number,
 }
+
+export type Slots = SlotSection[]
+
 const opposite = (degrees: number): number => {
   return (degrees + 180) % 360
 }
@@ -54,4 +57,10 @@ export const getSlotSection = (list: number[], index: number): SlotSection => {
     center,
     max,
   }
+}
+
+export const getSlots = (list: number[]): Slots => {
+  return list.map((_item, i) => {
+    return getSlotSection(list, i)
+  })
 }
