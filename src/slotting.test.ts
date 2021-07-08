@@ -1,17 +1,4 @@
-import { getDegreeDiff } from '.'
-
-const getRight = (a: number, afterA: number): number => {
-  const diff = getDegreeDiff(a, afterA)
-  return (a + diff/2) % 360
-}
-
-const getLeft = (a: number, afterA: number): number => {
-  const diff = getDegreeDiff(a, afterA)
-  const r = (a - diff/2)
-  return r < 0
-    ? 360 + r
-    : r
-}
+import * as mod from './slotting'
 
 describe('getting right', () => {
   it.each([
@@ -36,7 +23,7 @@ describe('getting right', () => {
       92,
     ],
   ])('%s = %s, %s', (expected, a, afterA) => {
-    const actual = getRight(a, afterA)
+    const actual = mod.getRight(a, afterA)
     expect(actual).toBe(expected)
   })
 })
@@ -64,7 +51,31 @@ describe('getting left', () => {
       270,
     ],
   ])('%s = %s, %s', (expected, a, beforeA) => {
-    const actual = getLeft(a, beforeA)
+    const actual = mod.getLeft(a, beforeA)
     expect(actual).toBe(expected)
+  })
+})
+
+describe('getItemBefore', () => {
+  it('should should return the one before', () => {
+    const list = [0, 90, 180, 270]
+    expect(mod.getItemBefore(list, 1)).toBe(list[0])
+  })
+
+  it('should should return the one before, even if it has to loop', () => {
+    const list = [0, 90, 180, 270]
+    expect(mod.getItemBefore(list, 0)).toBe(list[3])
+  })
+})
+
+describe('getItemAfter', () => {
+  it('should should return the one after', () => {
+    const list = [0, 90, 180, 270]
+    expect(mod.getItemAfter(list, 1)).toBe(list[2])
+  })
+
+  it('should should return the one after, even if it has to loop', () => {
+    const list = [0, 90, 180, 270]
+    expect(mod.getItemAfter(list, 3)).toBe(list[0])
   })
 })
