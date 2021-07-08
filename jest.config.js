@@ -6,5 +6,5 @@ module.exports = {
       diagnostics: false,
     },
   },
-  verbose: false,
+  verbose: true,
 }

@@ -178,7 +178,7 @@ describe('comparing islands', () => {
         }),
       ],
     ],
-  ])('should return a composite number of the relationship', (expected, a, b) => {
+  ])('should return %s', (expected, a, b) => {
     const actual = mod.compareIslands(a, b)
     expect(actual).toBeCloseTo(expected, 2)
   })
