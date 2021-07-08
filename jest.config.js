@@ -7,4 +7,5 @@ module.exports = {
     },
   },
   verbose: true,
+  restoreMocks: true,
 }

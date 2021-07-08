@@ -66,57 +66,20 @@ describe('getDegreeDiff', () => {
   })
 })
 
-describe('degrees comparing', () => {
+describe('degrees sensitivity', () => {
   it.each([
-    [
-      1,
-      90,
-      90,
-    ],
-    [
-      0,
-      90,
-      270,
-    ],
-    [
-      0.98,
-      90,
-      95,
-    ],
-    [
-      0.98,
-      0,
-      355,
-    ],
-    [
-      0.5,
-      90,
-      180,
-    ],
-    [
-      0.5,
-      90,
-      0,
-    ],
-  ])('should return %d for %d, %d', (expected, a, b) => {
-    expect(mod.compareDegrees(a, b)).toBeCloseTo(expected, 1)
-  })
-})
-
-describe('comparing measurements', () => {
-  describe('degrees should carry more weight than distance', () => {
-    it('should not match when degrees are so far away', () => {
-      const a = getMeasurement({
-        degrees: 0,
-        distanceEstimate: mod.Estimate.CLOSE,
-      })
-      const b = getMeasurement({
-        degrees: 180,
-        distanceEstimate: mod.Estimate.CLOSE,
-      })
-      const actual = mod.compareMeasurements(a, b)
-      expect(actual).toBeLessThanOrEqual(0.1)
-    })
+    [0, 1.00],
+    [1, 0.99],
+    [11, 0.54],
+    [23, 0.39],
+    [45, 0.25],
+    [90, 0.133],
+    [180, 0.00],
+  ])('when difference is %s, it should return %s', (diff, expected) => {
+    // Degrees need to be pretty close to be considered the same.
+    jest.spyOn(mod, 'getDegreeDiff').mockReturnValue(diff)
+    const actual = mod.compareDegrees(1, 1)
+    expect(actual).toBeCloseTo(expected, 1)
   })
 })
 
@@ -162,7 +125,7 @@ describe('comparing islands', () => {
     ],
     [
       // pretty close
-      0.95,
+      0.777,
       [
         getMeasurement({ degrees: 0 }),
         getMeasurement({
@@ -178,8 +141,45 @@ describe('comparing islands', () => {
         }),
       ],
     ],
+    [
+      // These are not very similar.
+      0.637,
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({
+          degrees: 90,
+          distanceEstimate: mod.Estimate.MEDIUM,
+        }),
+        getMeasurement({ degrees: 23 }),
+      ],
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({ degrees: 12 }),
+        getMeasurement({
+          degrees: 60,
+          distanceEstimate: mod.Estimate.FAR,
+        }),
+      ],
+    ],
   ])('should return %s', (expected, a, b) => {
     const actual = mod.compareIslands(a, b)
     expect(actual).toBeCloseTo(expected, 2)
+  })
+})
+
+describe('comparing measurements', () => {
+  describe('degrees should carry more weight than distance', () => {
+    it('should not match when degrees are so far away', () => {
+      const a = getMeasurement({
+        degrees: 0,
+        distanceEstimate: mod.Estimate.CLOSE,
+      })
+      const b = getMeasurement({
+        degrees: 180,
+        distanceEstimate: mod.Estimate.CLOSE,
+      })
+      const actual = mod.compareMeasurements(a, b)
+      expect(actual).toBeLessThanOrEqual(0.1)
+    })
   })
 })

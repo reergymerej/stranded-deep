@@ -71,8 +71,12 @@ export const getDegreeDiff = (a: number, b: number): number => {
 
 export const compareDegrees = (a: number, b: number): number => {
   const diff = getDegreeDiff(a, b)
-  const similarity = 1 - (diff / 180)
-  return similarity
+  // This will range roughly from 0 - 2.6 with the right grade.
+  const similarity = (Math.log(180 / diff)) / 2
+  const scaled = similarity / 2.6
+  return scaled === Infinity
+    ? 1
+    : scaled
 }
 
 const sum = (numbers: number[]): number => {
@@ -83,7 +87,7 @@ const average = (numbers: number[]): number => {
   return sum(numbers) / numbers.length
 }
 
-const DEGREE_WEIGHT = 9
+const DEGREE_WEIGHT = 20
 const DISTANCE_WEIGHT = 1
 const weights = DEGREE_WEIGHT + DISTANCE_WEIGHT
 const degreeRatio = DEGREE_WEIGHT / weights

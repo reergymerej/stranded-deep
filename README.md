@@ -53,4 +53,7 @@ to other islands you see.  This will help map the world.
     * 070 - 1:00 origin
     * 110 - far
     * 280 - 1:30 next
-    *
+--------------------------------------------------------------------------------
+
+
+
