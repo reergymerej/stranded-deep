@@ -79,3 +79,60 @@ describe('getItemAfter', () => {
     expect(mod.getItemAfter(list, 3)).toBe(list[0])
   })
 })
+
+describe('getSlotSection', () => {
+  it.each<[
+    number[], // list
+    number, // index
+    mod.SlotSection, // expected
+  ]>([
+    [
+      [0, 90, 180, 270],
+      0,
+      {
+        min: 315,
+        center: 0,
+        max: 45,
+      },
+    ],
+    [
+      [0, 90, 180, 270],
+      1,
+      {
+        min: 45,
+        center: 90,
+        max: 135,
+      },
+    ],
+    [
+      [0, 90, 180, 270],
+      2,
+      {
+        min: 135,
+        center: 180,
+        max: 225,
+      },
+    ],
+    [
+      [0, 90, 180, 270],
+      3,
+      {
+        min: 225,
+        center: 270,
+        max: 315,
+      },
+    ],
+    [
+      [90],
+      0,
+      {
+        min: 270,
+        center: 90,
+        max: 270,
+      },
+    ],
+  ])('%s, %d = %s', (list, index, expected) => {
+    const actual = mod.getSlotSection(list, index)
+    expect(actual).toEqual(expected)
+  })
+})

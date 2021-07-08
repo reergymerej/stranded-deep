@@ -26,3 +26,32 @@ export const getItemAfter = <T>(list: T[], index: number): T => {
     : index + 1
   return list[afterIndex]
 }
+
+export type SlotSection = {
+  min: number,
+  center: number,
+  max: number,
+}
+const opposite = (degrees: number): number => {
+  return (degrees + 180) % 360
+}
+
+export const getSlotSection = (list: number[], index: number): SlotSection => {
+  if (list.length === 1) {
+    return {
+      min: opposite(list[0]),
+      center: list[0],
+      max: opposite(list[0]),
+    }
+  }
+  const center = list[index]
+  const beforeCenter = getItemBefore<number>(list, index)
+  const afterCenter = getItemAfter<number>(list, index)
+  const min = getLeft(center, beforeCenter)
+  const max = getRight(center, afterCenter)
+  return {
+    min,
+    center,
+    max,
+  }
+}
