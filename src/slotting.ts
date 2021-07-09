@@ -39,15 +39,14 @@ const opposite = (degrees: number): number => {
   return (degrees + 180) % 360
 }
 
-export const getSlotSection = (list: number[], index: number): SlotSection => {
+export const getSlotSection = (center: number, index: number, list: number[]): SlotSection => {
   if (list.length === 1) {
     return {
-      min: opposite(list[0]),
-      center: list[0],
-      max: opposite(list[0]),
+      min: opposite(center),
+      center,
+      max: opposite(center),
     }
   }
-  const center = list[index]
   const beforeCenter = getItemBefore<number>(list, index)
   const afterCenter = getItemAfter<number>(list, index)
   const min = getLeft(center, beforeCenter)
@@ -60,7 +59,5 @@ export const getSlotSection = (list: number[], index: number): SlotSection => {
 }
 
 export const getSlots = (list: number[]): Slots => {
-  return list.map((_item, i) => {
-    return getSlotSection(list, i)
-  })
+  return list.map(getSlotSection)
 }

@@ -132,7 +132,7 @@ describe('getSlotSection', () => {
       },
     ],
   ])('%s, %d = %s', (list, index, expected) => {
-    const actual = mod.getSlotSection(list, index)
+    const actual = mod.getSlotSection(list[index], index, list)
     expect(actual).toEqual(expected)
   })
 })
