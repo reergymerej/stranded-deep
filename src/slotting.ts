@@ -76,7 +76,7 @@ const getLeftAndRightForSlots = (a: number[], b: number[]): { left: number[], ri
     return { left, right }
 }
 
-type PairedWithSlots = [number, number | null][]
+export type PairedWithSlots = [number, number | null][]
 
 export const isBetweenDegrees = (left: number, right: number, value: number): boolean => {
   // To make things easier, adjust left so it is 0.  It's confusing if we have

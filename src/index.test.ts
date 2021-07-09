@@ -161,6 +161,45 @@ describe('comparing islands', () => {
         }),
       ],
     ],
+    [
+      // close match, but missing a measurement
+      0.621,
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({ degrees: 90 }),
+        getMeasurement({ degrees: 180 }),
+        getMeasurement({ degrees: 270 }),
+      ],
+      [
+        getMeasurement({ degrees: 10 }),
+        getMeasurement({ degrees: 85 }),
+        getMeasurement({ degrees: 275 }),
+      ],
+    ],
+    [
+      // That's got to be a match!
+      // missing one, a minor diff in deg, and one diff in estimate
+      0.909,
+      [
+        getMeasurement({ degrees: 90 }),
+        getMeasurement({ degrees: 180 }),
+        getMeasurement({ degrees: 135 }),
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({ degrees: 45, distanceEstimate: mod.Estimate.MEDIUM }),
+        getMeasurement({ degrees: 225 }),
+        getMeasurement({ degrees: 270 }),
+        getMeasurement({ degrees: 315 }),
+      ],
+      [
+        getMeasurement({ degrees: 0 }),
+        getMeasurement({ degrees: 42, distanceEstimate: mod.Estimate.FAR }),
+        getMeasurement({ degrees: 135 }),
+        getMeasurement({ degrees: 270 }),
+        getMeasurement({ degrees: 315 }),
+        getMeasurement({ degrees: 180 }),
+        getMeasurement({ degrees: 90 }),
+      ],
+    ],
   ])('should return %s', (expected, a, b) => {
     const actual = mod.compareIslands(a, b)
     expect(actual).toBeCloseTo(expected, 2)

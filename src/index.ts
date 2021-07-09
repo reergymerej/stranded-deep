@@ -1,3 +1,5 @@
+import { pairWithSlots, PairedWithSlots } from './slotting'
+
 export enum Estimate {
   CLOSE,
   MEDIUM,
@@ -120,6 +122,31 @@ const sortBy = <T, K extends keyof T>(field: K) => (a: T, b: T): number => {
 
 const byDegrees = sortBy<Measurement, 'degrees'>('degrees')
 
+const compareWithSlots = (a: Island, b: Island): number => {
+  const MISSING_MEASUREMENT_PENALTY = 0.5
+  // assumes islands have been sorted by degrees
+  const aList = a.map(measurement => measurement.degrees)
+  const bList = b.map(measurement => measurement.degrees)
+  const leftIsland = a.length > bList.length
+    ? a
+    : b
+  const rightIsland = leftIsland === a
+    ? b
+    : a
+  const paired: PairedWithSlots = pairWithSlots(aList, bList)
+  const result: number[] = paired.map(([left, right]) => {
+    const leftMeasurement: Measurement | undefined = leftIsland.find(x => x.degrees === left)
+    const rightMeasurement: Measurement | undefined = rightIsland.find(x => x.degrees === right)
+    if (leftMeasurement === undefined) {
+      throw new Error('There should always be a left.  WTF?')
+    }
+    return rightMeasurement === undefined
+      ? (1 - MISSING_MEASUREMENT_PENALTY)
+      : compareMeasurements(leftMeasurement, rightMeasurement)
+  })
+  return average(result)
+}
+
 export const compareIslands = (a: Island, b: Island): number => {
   const aSorted = a.sort(byDegrees)
   const bSorted = b.sort(byDegrees)
@@ -130,6 +157,6 @@ export const compareIslands = (a: Island, b: Island): number => {
     })
     return average(result)
   } else {
-    throw new Error('I do not know how to handle missing measurements.')
+    return compareWithSlots(bSorted, aSorted)
   }
 }
