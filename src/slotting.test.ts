@@ -139,7 +139,7 @@ describe('getSlotSection', () => {
 
 describe('getSlots', () => {
   it('should return super sexy slotting sections for sorting fun', () => {
-    const list = [0, 90, 180, 270]
+    const list = [0, 90, 270]
     const actual = mod.getSlots(list)
     const expected: mod.Slots = [
       {
@@ -150,18 +150,105 @@ describe('getSlots', () => {
       {
         min: 45,
         center: 90,
-        max: 135,
+        max: 180,
       },
       {
-        min: 135,
-        center: 180,
-        max: 225,
-      },
-      {
-        min: 225,
+        min: 180,
         center: 270,
         max: 315,
       },
+    ]
+    expect(actual).toEqual(expected)
+  })
+})
+
+describe('isBetweenDegrees', () => {
+  it.each([
+    [
+      0, // left
+      10, // right
+      0, // value
+      true, //expected
+    ],
+    [
+      0, // left
+      10, // right
+      10, // value
+      true, //expected
+    ],
+    [
+      0, // left
+      10, // right
+      11, // value
+      false, //expected
+    ],
+    [
+      350, // left
+      10, // right
+      351, // value
+      true, //expected
+    ],
+    [
+      180, // left
+      0, // right
+      351, // value
+      true, //expected
+    ],
+    [
+      180, // left
+      0, // right
+      90, // value
+      false, //expected
+    ],
+  ])('%s, %s = %s', (left, right, value, expected) => {
+    const actual = mod.isBetweenDegrees(left, right, value)
+    expect(actual).toBe(expected)
+  })
+})
+
+describe('getSlotMatchIndex', () => {
+  it.each([
+    [
+      mod.getSlots([0, 90, 180, 270]),
+      10,
+      0,
+    ],
+    [
+      mod.getSlots([0, 90, 180, 270]),
+      85,
+      1,
+    ],
+    [
+      mod.getSlots([0, 90, 180, 270]),
+      275,
+      3,
+    ],
+    [
+      mod.getSlots([0, 180, 270]),
+      90,
+      0,
+    ],
+    [
+      mod.getSlots([0, 180, 270]),
+      315,
+      0,
+    ],
+  ])('%s, %s = %s', (slots, value, expected) => {
+    const actual = mod.getSlotMatchIndex(slots, value)
+    expect(actual).toBe(expected)
+  })
+})
+
+describe('pairWithSlots', () => {
+  it('should pair up the items pretty closely', () => {
+    const a = [355, 180, 90, 270]
+    const b = [10, 85, 275]
+    const actual = mod.pairWithSlots(a, b)
+    const expected = [
+      [90, 85],
+      [180, null],
+      [270, 275],
+      [355,10],
     ]
     expect(actual).toEqual(expected)
   })

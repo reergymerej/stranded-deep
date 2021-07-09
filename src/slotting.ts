@@ -61,3 +61,60 @@ export const getSlotSection = (center: number, index: number, list: number[]): S
 export const getSlots = (list: number[]): Slots => {
   return list.map(getSlotSection)
 }
+
+const byNumberAsc = (a: number, b: number): number => a - b
+
+const getLeftAndRightForSlots = (a: number[], b: number[]): { left: number[], right: number[]} => {
+  const aSorted = a.sort(byNumberAsc)
+  const bSorted = b.sort(byNumberAsc)
+  const left = a.length >= b.length
+    ? aSorted
+    : bSorted
+  const right = left === aSorted
+    ? bSorted
+    : aSorted
+    return { left, right }
+}
+
+type PairedWithSlots = [number, number | null][]
+
+export const isBetweenDegrees = (left: number, right: number, value: number): boolean => {
+  // To make things easier, adjust left so it is 0.  It's confusing if we have
+  // to keep moving across 359/0.
+  const diff = 360 - left
+  const min = (left + diff) % 360
+  const max = (right + diff) % 360
+  const target = (value + diff) % 360
+  return min <= target
+    && target <= max
+}
+
+export const getSlotMatchIndex = (slots: Slots, value: number): number => {
+  const index = slots.findIndex(({ min, max }) => {
+    return isBetweenDegrees(min, max, value)
+  })
+  return index
+}
+
+const _pairWithSlots = (slots: Slots, list: number[]): PairedWithSlots => {
+  // This assumes slots and list are sorted.
+  // This gives a list of each "slots" index where the matching list item
+  // belongs.
+  const slotIndices = list.map(value => getSlotMatchIndex(slots, value))
+  return slots.map(({ center }, i) => {
+    const slotIndicesIndex = slotIndices.indexOf(i)
+    const pair = slotIndicesIndex > -1
+      ? list[slotIndicesIndex]
+      : null
+    return [
+      center,
+      pair,
+    ]
+  })
+}
+
+export const pairWithSlots = (a: number[], b: number[]): PairedWithSlots => {
+  const { left, right } = getLeftAndRightForSlots(a, b)
+  const slots = getSlots(left)
+  return _pairWithSlots(slots, right)
+}
