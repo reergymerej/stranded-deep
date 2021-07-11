@@ -1,3 +1,4 @@
+let index = 0
 const names = [
   'Apricot',
   'Blackberry',
@@ -24,5 +25,9 @@ const names = [
 ]
 
 export const next = (): string => {
-  return names.shift()
+  return names[index++]
+}
+
+export const reset = (): void => {
+  index = 0
 }

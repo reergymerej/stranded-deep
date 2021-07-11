@@ -1,5 +1,6 @@
 import { Measurement, Estimate } from '../'
 import * as main from '../'
+import * as names from './name'
 
 const ftest = fit
 
@@ -82,40 +83,40 @@ const fingerprints: {[key: string]: Fingerprint} = {
   ],
 }
 
+const namedIslands: NamedIsland[] = [
+  {
+    fingerprint: fingerprints.A,
+    name: names.next(),
+  },
+  {
+    fingerprint: fingerprints.B,
+    name: names.next(),
+  },
+  {
+    fingerprint: fingerprints.C,
+    name: names.next(),
+  },
+  {
+    fingerprint: fingerprints.Boop,
+    name: names.next(),
+  },
+]
+
+const findIslandInList = (
+  namedIslands: NamedIsland[],
+  fingerprint: Fingerprint,
+  threshold = 0.7,
+): NamedIsland | undefined =>
+  namedIslands.find(
+    namedIsland =>
+    main.compareIslands(fingerprint, namedIsland.fingerprint) >= threshold
+  )
+
 describe('identifying a NamedIsland by fingerprint', () => {
-  const list: NamedIsland[] = [
-    {
-      fingerprint: fingerprints.A,
-      name: 'Alpha',
-    },
-    {
-      fingerprint: fingerprints.B,
-      name: 'Bravo',
-    },
-    {
-      fingerprint: fingerprints.C,
-      name: 'Charlie',
-    },
-    {
-      fingerprint: fingerprints.Boop,
-      name: 'Belle',
-    },
-  ]
-
-  const findIslandInList = (
-    list: NamedIsland[],
-    fingerprint: Fingerprint,
-    threshold = 0.7,
-  ): NamedIsland | undefined =>
-    list.find(
-      namedIsland =>
-      main.compareIslands(fingerprint, namedIsland.fingerprint) >= threshold
-    )
-
   describe('when there is no match', () => {
     it('should return undefined', () => {
       const fingerprint: Fingerprint = fingerprints.NotInList
-      const actual = findIslandInList(list, fingerprint)
+      const actual = findIslandInList(namedIslands, fingerprint)
       const expected = undefined
       expect(actual).toEqual(expected)
     })
@@ -124,7 +125,7 @@ describe('identifying a NamedIsland by fingerprint', () => {
   describe('when there is no close match', () => {
     it('should return undefined', () => {
       const fingerprint: Fingerprint = fingerprints.BoopOpposite
-      const actual = findIslandInList(list, fingerprint)
+      const actual = findIslandInList(namedIslands, fingerprint)
       const expected = undefined
       expect(actual).toEqual(expected)
     })
@@ -133,22 +134,37 @@ describe('identifying a NamedIsland by fingerprint', () => {
   describe('when there is a close match', () => {
     it('should return the matched NamedIsland', () => {
       const fingerprint: Fingerprint = fingerprints.Beep
-      const actual = findIslandInList(list, fingerprint)
-      const expected: NamedIsland = list.find(x => x.name === 'Belle')
+      const actual = findIslandInList(namedIslands, fingerprint)
+      const expected: NamedIsland = namedIslands.find(x => x.fingerprint === fingerprints.Boop)
       expect(actual).toEqual(expected)
     })
   })
 })
 
-const getLocationName = (fingerprint: Fingerprint): string => {
-  return 'Hollywood'
+const getLocationName = (fingerprint: Fingerprint, namedIslands: NamedIsland[]): string => {
+  const found = findIslandInList(namedIslands, fingerprint)
+  if (found) {
+    return found.name
+  }
+  // Side effect - add new named location????
+  return names.next()
 }
 
-xdescribe('getLocationName', () => {
-  describe('when we have not named any yet', () => {
+describe('getLocationName', () => {
+  xdescribe('when we have not named any yet', () => {
     it('should return the next name', () => {
-      const actual = getLocationName()
-      const expected = 'Hollywood'
+      const fingerprint: Fingerprint = fingerprints.A
+      const actual = getLocationName(fingerprint, namedIslands)
+      const expected = 'Apricot'
+      expect(actual).toBe(expected)
+    })
+  })
+
+  describe('when we named some and recognize this', () => {
+    it('should return the same name', () => {
+      const fingerprint: Fingerprint = fingerprints.B
+      const actual = getLocationName(fingerprint, namedIslands)
+      const expected = 'Blackberry'
       expect(actual).toBe(expected)
     })
   })
@@ -158,7 +174,7 @@ const logEntryToRouteEntry = (logEntry: LogEntry): RouteEntry => {
   const routeEntry: RouteEntry = {
     origin: logEntry.origin,
     location: logEntry.fingerprint,
-    // locationName: getLocationName(logEntry.fingerprint),
+    // locationName: getLocationName(logEntry.fingerprint, namedIslands),
   }
   return routeEntry
 }
