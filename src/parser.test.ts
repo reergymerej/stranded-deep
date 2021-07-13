@@ -1,92 +1,31 @@
+import * as mod from './parser'
 import fs from 'fs'
 import path from 'path'
 
 const filepath = path.resolve('/Users/jeremygreer/Desktop/strandeddeep/measurements.md')
 const file = fs.readFileSync(filepath, 'utf8')
 
-type DistanceEstimate = 'close' | 'medium' | 'far'
-type DistanceTime = {
-  hours: number,
-  minutes: number,
-}
+describe('', () => {
+  it('should parse a log', () => {
+    const fingerprints = mod.toFingerPrints(file)
+    fingerprints.forEach(x => {
+      x.forEach(y => {
+        expect(y).toMatchObject({
+          degrees: expect.any(Number),
+        })
+      })
+    })
+  })
 
-type Navigation = {
-  next?: boolean,
-  origin?: boolean,
-}
+  fdescribe('naming fingerprints', () => {
+    let fingerprints: mod.Fingerprint[] = []
+    beforeEach(() => {
+      fingerprints = mod.toFingerPrints(file)
+    })
 
-type Degrees = number
-type Measurement = {
-  degrees: Degrees,
-  distance: DistanceEstimate | DistanceTime,
-} & Navigation
-
-
-type Fingerprint = Measurement[]
-
-const getDegrees = (raw: string): Degrees => {
-  return parseInt(raw, 10)
-}
-
-const getNavigation = (raw = ''): Navigation => {
-  const trimmed = raw.trim()
-  return {
-    next: trimmed === 'next',
-    origin: raw === 'origin',
-  }
-}
-
-const getDistance = (raw: string): DistanceEstimate | DistanceTime => {
-  const estimate = (/close|medium|far/).exec(raw)
-  if (estimate) {
-    return estimate[0] as DistanceEstimate
-  }
-  const regex = /(\d):(\d\d)/
-  const matches = regex.exec(raw)
-  const [,
-    hoursRaw,
-    minutesRaw,
-  ] = matches
-  return {
-    hours: parseInt(hoursRaw, 10),
-    minutes: parseInt(minutesRaw, 10),
-  }
-}
-
-const toMeasurement = (raw: string): Measurement => {
-  const regex = /^(\d{3,}) ([^ ]+)( origin| next)?\n/g
-  const matches = regex.exec(raw)
-  const [,
-    degreesRaw,
-    distanceRaw,
-    navigationRaw
-  ] = matches
-  const degrees = getDegrees(degreesRaw)
-  const navigation = getNavigation(navigationRaw)
-  const distance = getDistance(distanceRaw)
-
-  return {
-    ...navigation,
-    degrees,
-    distance,
-  }
-}
-
-const toFingerprint = (raw: string): Fingerprint => {
-  return raw.split(/\* /g)
-    .filter(x => x)
-    .map(toMeasurement)
-}
-
-const toFingerPrints = (raw: string): Fingerprint[] => {
-  return raw.split(/# Measurement.*\n/g)
-    .filter(x => x)
-    .map(toFingerprint)
-}
-
-describe('?', () => {
-  it('should ?', () => {
-    const fingerprints = toFingerPrints(file)
-    console.log(JSON.stringify(fingerprints, null, 2))
+    it('should give names to each', () => {
+      const named = mod.nameFingerPrints(fingerprints)
+      console.log(named)
+    })
   })
 })
