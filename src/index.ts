@@ -1,25 +1,6 @@
-import { pairWithSlots, PairedWithSlots } from './slotting'
+import { pairWithSlots } from './slotting'
+import {Island, Estimate, Measurement, PairedWithSlots} from './types'
 
-export enum Estimate {
-  CLOSE,
-  MEDIUM,
-  FAR,
-}
-
-type Time = {
-  hours: number,
-  minutes: number,
-}
-
-export type Measurement = {
-  degrees: number,
-  distanceEstimate: Estimate,
-  distanceMeasurement?: Time,
-  origin?: boolean,
-  next?: boolean,
-}
-
-export type Island = Measurement[]
 
 export const getValue = (island: Island): number => {
   return island[0].degrees

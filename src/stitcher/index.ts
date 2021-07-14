@@ -1,28 +1,6 @@
-import { Measurement } from '../'
 import * as main from '../'
 import * as names from './name'
-
-export type Fingerprint = Measurement[]
-
-export type NamedIsland = {
-  fingerprint: Fingerprint,
-  name: string,
-}
-
-export type LogEntry = {
-  origin: Fingerprint | null,
-  fingerprint: Fingerprint,
-  next: Measurement | null,
-}
-export type Log = LogEntry[]
-
-export type RouteEntry = {
-  origin: Fingerprint | null,
-  location: Fingerprint,
-  locationName?: string,
-}
-
-export type Route = RouteEntry[]
+import {NamedIsland, Fingerprint, LogEntry, RouteEntry, Log, Route} from '../types'
 
 export const findIslandInList = (
   namedIslands: NamedIsland[],

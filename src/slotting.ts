@@ -1,4 +1,5 @@
 import { getDegreeDiff } from '.'
+import {SlotSection, Slots, PairedWithSlots} from './types'
 
 export const getRight = (a: number, afterA: number): number => {
   const diff = getDegreeDiff(a, afterA)
@@ -26,14 +27,6 @@ export const getItemAfter = <T>(list: T[], index: number): T => {
     : index + 1
   return list[afterIndex]
 }
-
-export type SlotSection = {
-  min: number,
-  center: number,
-  max: number,
-}
-
-export type Slots = SlotSection[]
 
 const opposite = (degrees: number): number => {
   return (degrees + 180) % 360
@@ -76,7 +69,6 @@ const getLeftAndRightForSlots = (a: number[], b: number[]): { left: number[], ri
     return { left, right }
 }
 
-export type PairedWithSlots = [number, number | null][]
 
 export const isBetweenDegrees = (left: number, right: number, value: number): boolean => {
   // To make things easier, adjust left so it is 0.  It's confusing if we have

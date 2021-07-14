@@ -1,22 +1,16 @@
-type DistanceEstimate = 'close' | 'medium' | 'far'
-type DistanceTime = {
-  hours: number,
-  minutes: number,
-}
-
-type Navigation = {
-  next?: boolean,
-  origin?: boolean,
-}
-
-type Degrees = number
-type Measurement = {
-  degrees: Degrees,
-  distance: DistanceEstimate | DistanceTime,
-} & Navigation
-
-
-export type Fingerprint = Measurement[]
+import {getLocationName} from './stitcher'
+import {
+  Degrees,
+  DistanceEstimate,
+  DistanceTime,
+  Estimate,
+  Fingerprint2,
+  Island,
+  Measurement as MeasurementOriginal,
+  Measurement2,
+  NamedIsland,
+  Navigation,
+} from './types'
 
 const getDegrees = (raw: string): Degrees => {
   return parseInt(raw, 10)
@@ -47,7 +41,7 @@ const getDistance = (raw: string): DistanceEstimate | DistanceTime => {
   }
 }
 
-const toMeasurement = (raw: string): Measurement => {
+const toMeasurement = (raw: string): Measurement2 => {
   const regex = /^(\d{3,}) ([^ ]+)( origin| next)?\n/g
   const matches = regex.exec(raw)
   const [,
@@ -66,17 +60,41 @@ const toMeasurement = (raw: string): Measurement => {
   }
 }
 
-const toFingerprint = (raw: string): Fingerprint => {
+const toFingerprint = (raw: string): Fingerprint2 => {
   return raw.split(/\* /g)
     .filter(x => x)
     .map(toMeasurement)
 }
 
-export const toFingerPrints = (raw: string): Fingerprint[] => {
+export const toFingerPrints = (raw: string): Fingerprint2[] => {
   return raw.split(/# Measurement.*\n/g)
     .filter(x => x)
     .map(toFingerprint)
 }
 
-export const nameFingerPrints = (fingerprints: Fingerprint[]) => {
+const fingerPrintLineToIslandLine = (fpl: Measurement2): MeasurementOriginal => {
+  return {
+    // TODO: account for missing attributes from fpl
+    degrees: fpl.degrees,
+    distanceEstimate: Estimate.FAR, // xxx, not real
+    next: fpl.next,
+    origin: fpl.origin,
+  }
+}
+
+const toIsland = (fingerprint: Fingerprint2): Island => {
+  return fingerprint.map(fingerPrintLineToIslandLine)
+}
+
+export const nameFingerPrints = (fingerprints: Fingerprint2[]): NamedIsland[] => {
+  const namedIslands: NamedIsland[] = []
+  const islands: Island[] = fingerprints.map(toIsland)
+  islands.forEach(island => {
+    const name = getLocationName(island, namedIslands)
+    namedIslands.push({
+      name,
+      fingerprint: island,
+    })
+  })
+  return namedIslands
 }

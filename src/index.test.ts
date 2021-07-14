@@ -1,9 +1,10 @@
 import * as mod from '.'
+import {Measurement, Estimate} from './types'
 
-const getMeasurement = (data: Partial<mod.Measurement> = {
-}): mod.Measurement => ({
+const getMeasurement = (data: Partial<Measurement> = {
+}): Measurement => ({
   degrees: 0,
-  distanceEstimate: mod.Estimate.MEDIUM,
+  distanceEstimate: Estimate.MEDIUM,
   ...data,
 })
 
@@ -11,23 +12,23 @@ describe('distanceEstimate comparing', () => {
   it.each([
     [
       1,
-      mod.Estimate.CLOSE,
-      mod.Estimate.CLOSE,
+      Estimate.CLOSE,
+      Estimate.CLOSE,
     ],
     [
       0.5,
-      mod.Estimate.CLOSE,
-      mod.Estimate.MEDIUM,
+      Estimate.CLOSE,
+      Estimate.MEDIUM,
     ],
     [
       0.5,
-      mod.Estimate.FAR,
-      mod.Estimate.MEDIUM,
+      Estimate.FAR,
+      Estimate.MEDIUM,
     ],
     [
       0,
-      mod.Estimate.FAR,
-      mod.Estimate.CLOSE,
+      Estimate.FAR,
+      Estimate.CLOSE,
     ],
   ])('should return %d for %d, %d', (expected, a, b) => {
     expect(mod.compareDistance(a, b)).toBe(expected)
@@ -101,13 +102,13 @@ describe('comparing islands', () => {
       [
         getMeasurement({
           degrees: 0,
-          distanceEstimate: mod.Estimate.CLOSE,
+          distanceEstimate: Estimate.CLOSE,
         }),
       ],
       [
         getMeasurement({
           degrees: 180,
-          distanceEstimate: mod.Estimate.FAR,
+          distanceEstimate: Estimate.FAR,
         }),
       ],
     ],
@@ -130,14 +131,14 @@ describe('comparing islands', () => {
         getMeasurement({ degrees: 0 }),
         getMeasurement({
           degrees: 90,
-          distanceEstimate: mod.Estimate.MEDIUM,
+          distanceEstimate: Estimate.MEDIUM,
         }),
       ],
       [
         getMeasurement({ degrees: 0 }),
         getMeasurement({
           degrees: 80,
-          distanceEstimate: mod.Estimate.FAR,
+          distanceEstimate: Estimate.FAR,
         }),
       ],
     ],
@@ -148,7 +149,7 @@ describe('comparing islands', () => {
         getMeasurement({ degrees: 0 }),
         getMeasurement({
           degrees: 90,
-          distanceEstimate: mod.Estimate.MEDIUM,
+          distanceEstimate: Estimate.MEDIUM,
         }),
         getMeasurement({ degrees: 23 }),
       ],
@@ -157,7 +158,7 @@ describe('comparing islands', () => {
         getMeasurement({ degrees: 12 }),
         getMeasurement({
           degrees: 60,
-          distanceEstimate: mod.Estimate.FAR,
+          distanceEstimate: Estimate.FAR,
         }),
       ],
     ],
@@ -185,14 +186,14 @@ describe('comparing islands', () => {
         getMeasurement({ degrees: 180 }),
         getMeasurement({ degrees: 135 }),
         getMeasurement({ degrees: 0 }),
-        getMeasurement({ degrees: 45, distanceEstimate: mod.Estimate.MEDIUM }),
+        getMeasurement({ degrees: 45, distanceEstimate: Estimate.MEDIUM }),
         getMeasurement({ degrees: 225 }),
         getMeasurement({ degrees: 270 }),
         getMeasurement({ degrees: 315 }),
       ],
       [
         getMeasurement({ degrees: 0 }),
-        getMeasurement({ degrees: 42, distanceEstimate: mod.Estimate.FAR }),
+        getMeasurement({ degrees: 42, distanceEstimate: Estimate.FAR }),
         getMeasurement({ degrees: 135 }),
         getMeasurement({ degrees: 270 }),
         getMeasurement({ degrees: 315 }),
@@ -211,11 +212,11 @@ describe('comparing measurements', () => {
     it('should not match when degrees are so far away', () => {
       const a = getMeasurement({
         degrees: 0,
-        distanceEstimate: mod.Estimate.CLOSE,
+        distanceEstimate: Estimate.CLOSE,
       })
       const b = getMeasurement({
         degrees: 180,
-        distanceEstimate: mod.Estimate.CLOSE,
+        distanceEstimate: Estimate.CLOSE,
       })
       const actual = mod.compareMeasurements(a, b)
       expect(actual).toBeLessThanOrEqual(0.1)
