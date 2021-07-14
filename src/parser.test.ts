@@ -19,6 +19,33 @@ it('should parse a log', () => {
   })
 })
 
+const toLog = (namedIsland: NamedIsland): string => {
+  const lines = [
+    `# Measurements - ${namedIsland.name}`,
+    ...namedIsland.fingerprint.map(x => {
+      const {
+        degrees,
+        distanceEstimate,
+        distanceMeasurement,
+        next,
+        origin,
+      } = x
+      const sections = [
+        '*',
+        degrees.toString().padStart(3, '0'),
+        (DistanceEstimate[distanceEstimate] || '').toLowerCase(),
+        (distanceMeasurement && `${distanceMeasurement.hours}:${distanceMeasurement.minutes}`),
+        next && 'next',
+        origin && 'origin',
+      ]
+      return sections
+        .filter(x => x)
+        .join(' ')
+    }),
+  ]
+  return lines.join('\n')
+}
+
 describe('naming fingerprints', () => {
   let fingerprints: Fingerprint2[] = []
   beforeEach(() => {
@@ -28,10 +55,13 @@ describe('naming fingerprints', () => {
   it('should give names to each', () => {
     const named: NamedIsland[] = mod.nameFingerPrints(fingerprints)
     expect(named.length).toBeGreaterThan(0)
+    const logged: string[] = []
     named.forEach(x => {
       expect(x.name).toEqual(expect.any(String))
-      console.log(x)
+      logged.push(toLog(x))
     })
+
+    console.log(logged.join('\n\n'))
   })
 })
 

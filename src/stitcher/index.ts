@@ -8,8 +8,20 @@ export const findIslandInList = (
   threshold = 0.7,
 ): NamedIsland | undefined =>
   namedIslands.find(
-    namedIsland =>
-    main.compareIslands(fingerprint, namedIsland.fingerprint) >= threshold
+    namedIsland => {
+    const comparisonResult = main.compareIslands(fingerprint, namedIsland.fingerprint)
+    const isSame = comparisonResult >= threshold
+    if (isSame) {
+      // console.log(`This looks like ${namedIsland.name}.`)
+      // console.log({
+      //   comparisonResult,
+      //   [namedIsland.name]: fingerprint,
+      //   fingerprint,
+      // })
+    }
+
+    return isSame
+    }
   )
 
 export const getLocationName = (fingerprint: Fingerprint, namedIslands: NamedIsland[]): string => {

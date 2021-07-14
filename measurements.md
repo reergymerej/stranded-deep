@@ -44,14 +44,3 @@
 * 198 far
 * 247 1:15 next
 * 280 far
-
-# Measurements
-* 010 2:30 origin
-* 060 medium
-* 330 2:30 next
-* 340 far
-
-# Measurements
-* 012 medium
-* 070 1:30 next
-* 158 2:30 origin
