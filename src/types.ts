@@ -6,12 +6,6 @@ export type SlotSection = {
 export type Slots = SlotSection[]
 export type PairedWithSlots = [number, number | null][]
 
-export type Fingerprint = Measurement[]
-
-export type NamedIsland = {
-  fingerprint: Fingerprint,
-  name: string,
-}
 
 export type LogEntry = {
   origin: Fingerprint | null,
@@ -28,8 +22,12 @@ export type RouteEntry = {
 
 export type Route = RouteEntry[]
 
+export enum DistanceEstimate {
+  CLOSE,
+  MEDIUM,
+  FAR,
+}
 
-export type DistanceEstimate = 'close' | 'medium' | 'far'
 export type DistanceTime = {
   hours: number,
   minutes: number,
@@ -41,18 +39,8 @@ export type Navigation = {
 }
 
 export type Degrees = number
-export type Measurement2 = {
-  degrees: Degrees,
-  distance: DistanceEstimate | DistanceTime,
-} & Navigation
 
-export type Fingerprint2 = Measurement2[]
 
-export enum Estimate {
-  CLOSE,
-  MEDIUM,
-  FAR,
-}
 
 export type Time = {
   hours: number,
@@ -60,11 +48,28 @@ export type Time = {
 }
 
 export type Measurement = {
-  degrees: number,
-  distanceEstimate: Estimate,
+  degrees: Degrees,
+  distanceEstimate?: DistanceEstimate,
   distanceMeasurement?: Time,
-  origin?: boolean,
-  next?: boolean,
+} & Navigation
+
+export type Measurement2 = {
+  degrees: Degrees,
+  // TODO: split and deprecate
+  distance: DistanceEstimate | DistanceTime,
+
+  distanceEstimate?: DistanceEstimate,
+  distanceMeasurement?: Time,
+} & Navigation
+
+export type Fingerprint2 = Measurement2[]
+export type Fingerprint = Measurement[]
+
+export type NamedIsland = {
+  fingerprint: Fingerprint,
+  name: string,
 }
 
-export type Island = Measurement[]
+export const isDistanceTime = (distance: DistanceEstimate | DistanceTime): distance is DistanceTime => {
+  return (distance as DistanceTime).minutes !== undefined
+}

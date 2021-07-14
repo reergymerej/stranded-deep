@@ -3,13 +3,13 @@ import {
   Degrees,
   DistanceEstimate,
   DistanceTime,
-  Estimate,
   Fingerprint2,
-  Island,
+  Fingerprint as Island,
   Measurement as MeasurementOriginal,
   Measurement2,
   NamedIsland,
   Navigation,
+  isDistanceTime,
 } from './types'
 
 const getDegrees = (raw: string): Degrees => {
@@ -24,10 +24,23 @@ const getNavigation = (raw = ''): Navigation => {
   }
 }
 
-const getDistance = (raw: string): DistanceEstimate | DistanceTime => {
+const getEstimateFromString = (value: string): DistanceEstimate => {
+  switch (value) {
+    case 'close':
+      return DistanceEstimate.CLOSE
+    case 'medium':
+      return DistanceEstimate.MEDIUM
+    case 'far':
+      return DistanceEstimate.FAR
+    default:
+      throw new Error(`unhandled case "${value}"`)
+  }
+}
+
+export const getDistance = (raw: string): DistanceEstimate | DistanceTime => {
   const estimate = (/close|medium|far/).exec(raw)
   if (estimate) {
-    return estimate[0] as DistanceEstimate
+    return getEstimateFromString(estimate[0])
   }
   const regex = /(\d):(\d\d)/
   const matches = regex.exec(raw)
@@ -52,11 +65,16 @@ const toMeasurement = (raw: string): Measurement2 => {
   const degrees = getDegrees(degreesRaw)
   const navigation = getNavigation(navigationRaw)
   const distance = getDistance(distanceRaw)
-
   return {
     ...navigation,
     degrees,
     distance,
+    distanceEstimate: isDistanceTime(distance)
+      ? undefined
+      : distance,
+    distanceMeasurement: isDistanceTime(distance)
+      ? distance
+      : undefined
   }
 }
 
@@ -74,9 +92,9 @@ export const toFingerPrints = (raw: string): Fingerprint2[] => {
 
 const fingerPrintLineToIslandLine = (fpl: Measurement2): MeasurementOriginal => {
   return {
-    // TODO: account for missing attributes from fpl
     degrees: fpl.degrees,
-    distanceEstimate: Estimate.FAR, // xxx, not real
+    distanceEstimate: fpl.distanceEstimate,
+    distanceMeasurement: fpl.distanceMeasurement,
     next: fpl.next,
     origin: fpl.origin,
   }

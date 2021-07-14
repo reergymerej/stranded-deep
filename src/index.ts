@@ -1,5 +1,5 @@
 import { pairWithSlots } from './slotting'
-import {Island, Estimate, Measurement, PairedWithSlots} from './types'
+import {Fingerprint as Island, DistanceEstimate, Measurement, PairedWithSlots} from './types'
 
 
 export const getValue = (island: Island): number => {
@@ -15,20 +15,22 @@ export const compare = (a: Island, b: Island): number => {
   return similarity
 }
 
-const quantifyDistance = (a: Estimate): number => {
+const quantifyDistance = (a?: DistanceEstimate): number => {
   switch (a) {
-    case Estimate.CLOSE:
+    case undefined:
+      return -1
+    case DistanceEstimate.CLOSE:
       return 0
-    case Estimate.MEDIUM:
+    case DistanceEstimate.MEDIUM:
       return 1
-    case Estimate.FAR:
+    case DistanceEstimate.FAR:
       return 2
     default:
       throw new Error(`unhandled case "${a}"`)
   }
 }
 
-export const compareDistance = (a: Estimate, b: Estimate): number => {
+export const compareDistance = (a?: DistanceEstimate, b?: DistanceEstimate): number => {
   const aValue = quantifyDistance(a)
   const bValue = quantifyDistance(b)
   const diff = Math.abs(aValue - bValue)
@@ -37,10 +39,8 @@ export const compareDistance = (a: Estimate, b: Estimate): number => {
       return 1
     case 1:
       return 0.5
-    case 2:
-      return 0
     default:
-      throw new Error(`unhandled case "${diff}"`)
+      return 0
   }
 }
 
@@ -78,14 +78,14 @@ const distanceRatio = DISTANCE_WEIGHT / weights
 
 export const compareMeasurements = (a: Measurement, b: Measurement): number => {
   const degrees = compareDegrees(a.degrees, b.degrees)
-  const distanceEstimate = compareDistance(a.distanceEstimate, b.distanceEstimate)
+  const distanceDistanceEstimate = compareDistance(a.distanceEstimate, b.distanceEstimate)
   const weighted = {
     degrees: degreeRatio * degrees,
-    distanceEstimate: distanceRatio * distanceEstimate,
+    distanceDistanceEstimate: distanceRatio * distanceDistanceEstimate,
   }
   const dimensions = [
     weighted.degrees,
-    weighted.distanceEstimate,
+    weighted.distanceDistanceEstimate,
   ]
   return sum(dimensions)
 }

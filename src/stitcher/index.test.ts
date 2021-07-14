@@ -1,59 +1,59 @@
 import * as mod from './'
 import * as names from './name'
-import {Fingerprint, Estimate, NamedIsland, Log, Route} from '../types'
+import {Fingerprint, DistanceEstimate, NamedIsland, Log, Route} from '../types'
 
 const fingerprints: {[key: string]: Fingerprint} = {
   A: [
     {
       degrees: 90,
-      distanceEstimate: Estimate.MEDIUM,
+      distanceEstimate: DistanceEstimate.MEDIUM,
     },
     {
       degrees: 180,
-      distanceEstimate: Estimate.MEDIUM,
+      distanceEstimate: DistanceEstimate.MEDIUM,
     },
   ],
   B: [
     {
       degrees: 225,
-      distanceEstimate: Estimate.MEDIUM,
+      distanceEstimate: DistanceEstimate.MEDIUM,
     },
     {
       degrees: 270,
-      distanceEstimate: Estimate.MEDIUM,
+      distanceEstimate: DistanceEstimate.MEDIUM,
     },
   ],
   C: [
     {
       degrees: 45,
-      distanceEstimate: Estimate.MEDIUM,
+      distanceEstimate: DistanceEstimate.MEDIUM,
     },
     {
       degrees: 0,
-      distanceEstimate: Estimate.MEDIUM,
+      distanceEstimate: DistanceEstimate.MEDIUM,
     },
   ],
   Boop: [
     {
-      distanceEstimate: Estimate.FAR,
+      distanceEstimate: DistanceEstimate.FAR,
       degrees: 99,
     },
   ],
   BoopOpposite: [
     {
-      distanceEstimate: Estimate.CLOSE,
+      distanceEstimate: DistanceEstimate.CLOSE,
       degrees: 279,
     },
   ],
   Beep: [
     {
-      distanceEstimate: Estimate.FAR,
+      distanceEstimate: DistanceEstimate.FAR,
       degrees: 95,
     },
   ],
   NotInList: [
     {
-      distanceEstimate: Estimate.FAR,
+      distanceEstimate: DistanceEstimate.FAR,
       degrees: 11,
     },
   ],
@@ -200,7 +200,7 @@ describe('identifying a NamedIsland by fingerprint', () => {
 })
 
 describe('getLocationName', () => {
-  xdescribe('when we have not named any yet', () => {
+  describe('when we have not named any yet', () => {
     it('should return the next name', () => {
       const fingerprint: Fingerprint = fingerprints.A
       const actual = mod.getLocationName(fingerprint, namedIslands)
