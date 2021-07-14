@@ -1,5 +1,5 @@
 import * as mod from '.'
-import {Measurement, Estimate} from './types'
+import {Measurement, Estimate, Island} from './types'
 
 const getMeasurement = (data: Partial<Measurement> = {
 }): Measurement => ({
@@ -85,7 +85,7 @@ describe('degrees sensitivity', () => {
 })
 
 describe('comparing islands', () => {
-  it.each<[number, mod.Island, mod.Island]>([
+  it.each<[number, Island, Island]>([
     [
       // total match
       1,

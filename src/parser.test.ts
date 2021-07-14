@@ -1,9 +1,11 @@
 import * as mod from './parser'
 import fs from 'fs'
 import path from 'path'
-import {NamedIsland} from './stitcher'
+import {Fingerprint2, NamedIsland} from './types'
 
-const filepath = path.resolve('/Users/jeremygreer/Desktop/strandeddeep/measurements.md')
+const filepath = path.join(
+  __dirname,
+  '../measurements.md')
 const file = fs.readFileSync(filepath, 'utf8')
 
 describe('', () => {
@@ -19,7 +21,7 @@ describe('', () => {
   })
 
   describe('naming fingerprints', () => {
-    let fingerprints: mod.Fingerprint[] = []
+    let fingerprints: Fingerprint2[] = []
     beforeEach(() => {
       fingerprints = mod.toFingerPrints(file)
     })

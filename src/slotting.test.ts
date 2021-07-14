@@ -1,4 +1,5 @@
 import * as mod from './slotting'
+import {SlotSection, Slots} from './types'
 
 describe('getting right', () => {
   it.each([
@@ -84,7 +85,7 @@ describe('getSlotSection', () => {
   it.each<[
     number[], // list
     number, // index
-    mod.SlotSection, // expected
+    SlotSection, // expected
   ]>([
     [
       [0, 90, 180, 270],
@@ -141,7 +142,7 @@ describe('getSlots', () => {
   it('should return super sexy slotting sections for sorting fun', () => {
     const list = [0, 90, 270]
     const actual = mod.getSlots(list)
-    const expected: mod.Slots = [
+    const expected: Slots = [
       {
         min: 315,
         center: 0,
